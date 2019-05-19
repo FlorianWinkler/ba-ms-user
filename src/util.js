@@ -4,8 +4,10 @@ const assert = require("assert");
 const User = require("../src/User");
 
 // const dbUrl = "mongodb://127.0.0.1:27017/monolithDB";
-const dbUrl = "mongodb://10.0.0.156:27017/userDB";
+const dbUrl = "mongodb://10.0.0.166:27017/userDB";
 const userCollectionName="user";
+
+const numPopulateItems = 1000;
 
 let hostname = "unknown_host";
 let mongodbConn=null;
@@ -75,7 +77,7 @@ function populateDB() {
     );
 
     function insertNextUser() {
-        if (nextUserId < 100) {
+        if (nextUserId < numPopulateItems) {
             let user = new User("User" + nextUserId, "user" + nextUserId + "@test.at", "user" + nextUserId);
             userCollection.insertOne({
                 _id: nextUserId.toString(),
@@ -98,4 +100,5 @@ module.exports = {
     setHostname: setHostname,
     getHostname: getHostname,
     userCollectionName: userCollectionName,
+    numPopulateItems: numPopulateItems
 };
