@@ -3,7 +3,7 @@ const MongoClient = require("mongodb").MongoClient;
 const assert = require("assert");
 const User = require("../src/User");
 
-const dbUrl = "mongodb://userDB:27021/userDB";
+const dbUrl = "mongodb://userDB:27017/userDB";
 // const dbUrl = "mongodb://10.0.0.166:27017/userDB";
 const userCollectionName="user";
 
