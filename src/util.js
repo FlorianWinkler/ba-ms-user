@@ -5,12 +5,12 @@ const User = require("../src/User");
 
 // const dbUrl = "mongodb://ba-ms-userdb:27017/userDB";
 // const dbUrl = "mongodb://104.214.222.163:27017/userDB";
-const dbUrl = "mongodb://10.0.0.166:27017/userDB";
+const dbUrl = "mongodb://10.0.0.166:27017/userdb";
 // const userCollectionName="user";
 
 const numPopulateItems = 1000;
 const numTenants = 5;
-const tenantBase = "tenant";
+const tenantBaseString = "tenant";
 
 let hostname = "unknown_host";
 let mongodbConn=null;
@@ -75,7 +75,7 @@ function populateDB() {
 
 //--------insert Users--------
 
-        getDatabaseCollection(tenantBase+nextTenantId, function (collection) {
+        getDatabaseCollection(tenantBaseString+nextTenantId, function (collection) {
                 userCollection = collection;
                 insertNextUser();
             }
@@ -92,17 +92,18 @@ function populateDB() {
                 insertNextUser();
             });
         } else {
-            if(nextTenantId<numTenants) {
-                console.log("Users inserted for " + tenantBase + nextTenantId);
+            if(nextTenantId<numTenants-1) {
+                console.log("Users inserted for " + tenantBaseString + nextTenantId);
                 nextUserId = 0;
                 nextTenantId++;
-                getDatabaseCollection(tenantBase + nextTenantId, function (collection) {
+                getDatabaseCollection(tenantBaseString + nextTenantId, function (collection) {
                         userCollection = collection;
                         insertNextUser();
                     }
                 );
             }
             else{
+                console.log("Users inserted for " + tenantBaseString + nextTenantId);
                 console.log("Finished Users insert");
             }
         }
@@ -118,5 +119,5 @@ module.exports = {
     getHostname: getHostname,
     numPopulateItems: numPopulateItems,
     numTenants: numTenants,
-    tenantBase: tenantBase
+    tenantBaseString: tenantBaseString
 };

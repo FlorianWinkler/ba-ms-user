@@ -17,7 +17,7 @@ function registerUser(req, res) {
         req.body.username+nextUserId,
         req.body.email+nextUserId+"@test.at",
         req.body.password+nextUserId);
-    let randomTenant = util.tenantBase+Math.floor((Math.random() * util.numTenants));
+    let randomTenant = util.tenantBaseString+Math.floor((Math.random() * util.numTenants));
     // console.log("Tenant: "+randomTenant);
     findUserByUsername(user.username, randomTenant, function(dbResponse){
         if(dbResponse == null){
@@ -44,7 +44,7 @@ router.post('/login', function(req, res) {
     let random = Math.floor((Math.random() * util.numPopulateItems));
     let username = req.body.username+random;
     let password = req.body.password+random;
-    let randomTenant = util.tenantBase+Math.floor((Math.random() * util.numTenants));
+    let randomTenant = util.tenantBaseString+Math.floor((Math.random() * util.numTenants));
     // console.log("Tenant: "+randomTenant);
     findUserByUsername(username, randomTenant, function(dbResponse){
         if(dbResponse != null && checkUserCredentials(dbResponse.user,password)){
@@ -65,7 +65,7 @@ router.post('/login', function(req, res) {
 router.get('/get', function(req, res) {
     reqcounter++;
     let randomUserId = Math.floor((Math.random() * util.numPopulateItems)).toString();
-    let randomTenant = util.tenantBase+Math.floor((Math.random() * util.numTenants));
+    let randomTenant = util.tenantBaseString+Math.floor((Math.random() * util.numTenants));
     // console.log(randomTenant+" "+randomUserId);
     findUserById(randomUserId, randomTenant, function(dbResponse){
         if(dbResponse != null ){
