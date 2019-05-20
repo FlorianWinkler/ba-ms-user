@@ -6,9 +6,11 @@ const User = require("../src/User");
 // const dbUrl = "mongodb://ba-ms-userdb:27017/userDB";
 // const dbUrl = "mongodb://104.214.222.163:27017/userDB";
 const dbUrl = "mongodb://10.0.0.166:27017/userDB";
-const userCollectionName="user";
+// const userCollectionName="user";
 
 const numPopulateItems = 1000;
+const numTenants = 5;
+const tenantBase = "tenant";
 
 let hostname = "unknown_host";
 let mongodbConn=null;
@@ -69,13 +71,15 @@ function getHostname(){
 function populateDB() {
     let userCollection;
     let nextUserId = 0;
+    let nextTenantId = 0;
 
 //--------insert Users--------
-    getDatabaseCollection(userCollectionName, function (collection) {
-            userCollection = collection;
-            insertNextUser();
-        }
-    );
+
+        getDatabaseCollection(tenantBase+nextTenantId, function (collection) {
+                userCollection = collection;
+                insertNextUser();
+            }
+        );
 
     function insertNextUser() {
         if (nextUserId < numPopulateItems) {
@@ -88,7 +92,19 @@ function populateDB() {
                 insertNextUser();
             });
         } else {
-            console.log("Users inserted");
+            if(nextTenantId<numTenants) {
+                console.log("Users inserted for " + tenantBase + nextTenantId);
+                nextUserId = 0;
+                nextTenantId++;
+                getDatabaseCollection(tenantBase + nextTenantId, function (collection) {
+                        userCollection = collection;
+                        insertNextUser();
+                    }
+                );
+            }
+            else{
+                console.log("Finished Users insert");
+            }
         }
     }
 }
@@ -100,6 +116,7 @@ module.exports = {
     prepareDatabase: prepareDatabase,
     setHostname: setHostname,
     getHostname: getHostname,
-    userCollectionName: userCollectionName,
-    numPopulateItems: numPopulateItems
+    numPopulateItems: numPopulateItems,
+    numTenants: numTenants,
+    tenantBase: tenantBase
 };

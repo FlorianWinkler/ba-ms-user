@@ -17,11 +17,12 @@ function registerUser(req, res) {
         req.body.username+nextUserId,
         req.body.email+nextUserId+"@test.at",
         req.body.password+nextUserId);
-
-    findUserByUsername(user.username,function(dbResponse){
+    let randomTenant = util.tenantBase+Math.floor((Math.random() * util.numTenants));
+    // console.log("Tenant: "+randomTenant);
+    findUserByUsername(user.username, randomTenant, function(dbResponse){
         if(dbResponse == null){
             if(checkUserRequirements(user)){
-                insertUser(user,function(insertedUser){
+                insertUser(user, randomTenant, function(insertedUser){
                     res.json(insertedUser);
                 });
             }
@@ -40,10 +41,12 @@ function registerUser(req, res) {
 
 router.post('/login', function(req, res) {
     reqcounter++;
-    let random = Math.floor((Math.random() * util.numPopulateItems-1));
+    let random = Math.floor((Math.random() * util.numPopulateItems));
     let username = req.body.username+random;
     let password = req.body.password+random;
-    findUserByUsername(username, function(dbResponse){
+    let randomTenant = util.tenantBase+Math.floor((Math.random() * util.numTenants));
+    // console.log("Tenant: "+randomTenant);
+    findUserByUsername(username, randomTenant, function(dbResponse){
         if(dbResponse != null && checkUserCredentials(dbResponse.user,password)){
             // res.status(200).end();
             res.status(200).json({
@@ -52,7 +55,7 @@ router.post('/login', function(req, res) {
             });
         }
         else{
-            // console.log(dbResponse);
+            console.log(dbResponse);
             res.status(401).end();
         }
     });
@@ -61,8 +64,10 @@ router.post('/login', function(req, res) {
 //without URL Parameter for Random user retrieval
 router.get('/get', function(req, res) {
     reqcounter++;
-    let random = Math.floor((Math.random() * util.numPopulateItems-1)).toString();
-    findUserById(random, function(dbResponse){
+    let randomUserId = Math.floor((Math.random() * util.numPopulateItems)).toString();
+    let randomTenant = util.tenantBase+Math.floor((Math.random() * util.numTenants));
+    // console.log(randomTenant+" "+randomUserId);
+    findUserById(randomUserId, randomTenant, function(dbResponse){
         if(dbResponse != null ){
             res.json(dbResponse);
         }
@@ -73,9 +78,9 @@ router.get('/get', function(req, res) {
 });
 
 //with URL Parameter for usage with shoppingCart Service
-router.get('/get/:userId', function(req, res) {
+router.get('/get/:tenant/:userId', function(req, res) {
     reqcounter++;
-    findUserById(req.params.userId, function(dbResponse){
+    findUserById(req.params.userId, req.params.tenant, function(dbResponse){
         if(dbResponse != null ){
             res.json(dbResponse);
         }
@@ -85,8 +90,8 @@ router.get('/get/:userId', function(req, res) {
     });
 });
 
-function insertUser(user,callback){
-    util.getDatabaseCollection(util.userCollectionName,function (collection) {
+function insertUser(user, tenant, callback){
+    util.getDatabaseCollection(tenant,function (collection) {
             collection.insertOne({
                 _id: nextUserId+"",
                 user: user
@@ -111,16 +116,16 @@ function insertUser(user,callback){
 }
 
 
-function findUserByUsername(username, callback) {
-    util.getDatabaseCollection(util.userCollectionName,(async function (collection) {
+function findUserByUsername(username, tenant, callback) {
+    util.getDatabaseCollection(tenant, (async function (collection) {
         let retUser = await collection.findOne({"user.username": username});
         //console.log(retUser);
         callback(retUser);
     }));
 }
 
-function findUserById(id, callback) {
-    util.getDatabaseCollection(util.userCollectionName,(async function (collection) {
+function findUserById(id, tenant, callback) {
+    util.getDatabaseCollection(tenant,(async function (collection) {
         let retUser = await collection.findOne({"_id": id.toString()});
         // console.log(retUser);
         callback(retUser);
