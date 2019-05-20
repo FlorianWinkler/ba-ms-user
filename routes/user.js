@@ -9,7 +9,9 @@ let reqcounter = 0;
 let nextUserId = util.numPopulateItems+1000;
 
 
-router.post('/register', function(req, res) {
+router.post('/register', registerUser);
+
+function registerUser(req, res) {
     reqcounter++;
     let user = new User(
         req.body.username+nextUserId,
@@ -28,10 +30,13 @@ router.post('/register', function(req, res) {
             }
         }
         else{
-            res.status(418).end();
+            nextUserId+=1000;
+            console.log("Increased next User ID by 1000");
+            registerUser(req,res);
         }
     });
-});
+}
+
 
 router.post('/login', function(req, res) {
     reqcounter++;
