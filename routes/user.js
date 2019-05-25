@@ -8,6 +8,14 @@ const util = require('../src/util');
 let reqcounter = 0;
 let nextUserId = util.numPopulateItems+1000;
 
+router.get('/', function(req, res, next) {
+    res.send('User-Service running!');
+});
+
+router.get('/preparedb', function(req, res, next) {
+    util.prepareDatabase();
+    res.status(200).end();
+});
 
 router.post('/register', registerUser);
 
