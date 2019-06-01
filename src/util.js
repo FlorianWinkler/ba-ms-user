@@ -3,9 +3,9 @@ const MongoClient = require("mongodb").MongoClient;
 const assert = require("assert");
 const User = require("../src/User");
 
-// const dbUrl = "mongodb://ba-ms-userdb-svc:27017/userdb";
+const dbUrl = "mongodb://ba-ms-userdb-svc:27017/userdb";
 // const dbUrl = "mongodb://104.214.222.163:27017/userDB";
-const dbUrl = "mongodb://10.0.0.206:27017/userdb";
+// const dbUrl = "mongodb://10.0.0.206:27017/userdb";
 // const userCollectionName="user";
 
 const numPopulateItems = 1000;
