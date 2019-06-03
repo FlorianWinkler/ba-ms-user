@@ -9,7 +9,7 @@ const dbUrl = "mongodb://ba-ms-userdb-svc:27017/userdb";
 // const userCollectionName="user";
 
 const numPopulateItems = 1000;
-const numTenants = 15;
+const numTenants = 25;
 const tenantBaseString = "tenant";
 
 let hostname = "unknown_host";
